@@ -78,8 +78,8 @@ Schedulr/
 3. Navigate to **APIs & Services** → **Credentials**
 4. Click **"Create Credentials"** → **"OAuth client ID"**
 5. Application type: **"Web application"**
-6. **Authorized JavaScript origins**: `http://localhost:3000`
-7. **Authorized redirect URIs**: `http://localhost:8000/api/auth/callback`
+6. **Authorized JavaScript origins**: `http://127.0.0.1:3000`
+7. **Authorized redirect URIs**: `http://127.0.0.1:8000/api/auth/callback`
 8. Save your **Client ID** and **Client Secret**
 
 #### B. Enable Required APIs
@@ -137,13 +137,15 @@ Edit `backend/.env`:
 # Google OAuth
 GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=GOCSPX-your-secret
-GOOGLE_REDIRECT_URI=http://localhost:8000/api/auth/callback
+GOOGLE_REDIRECT_URI=http://127.0.0.1:8000/api/auth/callback
 
 # Core Settings
 APP_ENV=dev
-FRONTEND_BASE_URL=http://localhost:3000
-BACKEND_BASE_URL=http://localhost:8000
+FRONTEND_BASE_URL=http://127.0.0.1:3000
+BACKEND_BASE_URL=http://127.0.0.1:8000
 COOKIE_SECURE=false
+# Optional additional frontend origins (comma-separated)
+# CORS_ALLOWED_ORIGINS=http://127.0.0.1:3000,http://localhost:3000
 
 # Generate SECRET_KEY
 SECRET_KEY=your-generated-secret-key
@@ -169,7 +171,7 @@ python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().
 Create `frontend/.env.local`:
 
 ```bash
-NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
 ```
 
 ### 5. Run the Application
@@ -189,7 +191,7 @@ Terminal 1 (Backend):
 ```bash
 conda activate ds_mode
 cd backend
-uvicorn app.main:app --reload --port 8000
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 Terminal 2 (Frontend):
@@ -200,15 +202,15 @@ npm run dev
 
 ### 6. Access the Application
 
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8000
-- **API Docs**: http://localhost:8000/docs (Swagger UI)
+- **Frontend**: http://127.0.0.1:3000
+- **Backend API**: http://127.0.0.1:8000
+- **API Docs**: http://127.0.0.1:8000/docs (Swagger UI)
 
 ## Usage Guide
 
 ### 1. Sign In
 
-1. Visit http://localhost:3000
+1. Visit http://127.0.0.1:3000
 2. Click **"Sign in with Google"**
 3. Complete OAuth consent
 4. You'll be redirected to `/app`
@@ -304,8 +306,8 @@ Each update creates a new version (visible in Plan History).
 ### Issue: OAuth redirect fails
 
 **Check:**
-1. Redirect URI in Google Cloud Console matches: `http://localhost:8000/api/auth/callback`
-2. Frontend URL in backend `.env` is: `http://localhost:3000`
+1. Redirect URI in Google Cloud Console matches: `http://127.0.0.1:8000/api/auth/callback`
+2. Frontend URL in backend `.env` is: `http://127.0.0.1:3000`
 3. You added your Gmail as a test user (if using External consent screen)
 
 ### Issue: Deploy to tasks fails with 401
@@ -316,8 +318,9 @@ Each update creates a new version (visible in Plan History).
 
 **Check:**
 1. Backend is running on port 8000
-2. `NEXT_PUBLIC_API_URL=http://localhost:8000` in `frontend/.env.local`
-3. CORS is configured for `http://localhost:3000`
+2. `NEXT_PUBLIC_API_URL=http://127.0.0.1:8000` in `frontend/.env.local`
+3. CORS is configured for `http://127.0.0.1:3000`
+4. If you open frontend on `localhost` or a different dev port, set `CORS_ALLOWED_ORIGINS`
 
 ## Development Commands
 
@@ -336,7 +339,7 @@ npm run start            # Start production server
 
 # Backend commands
 cd backend
-uvicorn app.main:app --reload --port 8000     # Dev server
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000     # Dev server
 pytest                                         # Run tests (when added)
 ```
 

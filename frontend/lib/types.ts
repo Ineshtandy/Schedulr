@@ -1,4 +1,3 @@
-// TypeScript types for API communication
 export type Priority = 'low' | 'med' | 'high';
 
 export interface TaskItem {
@@ -15,6 +14,7 @@ export interface DayPlan {
 
 export interface Plan {
   plan_id: string;
+  conversation_id?: string;
   goal: string;
   start_date: string;
   num_days: number;
@@ -23,49 +23,54 @@ export interface Plan {
   created_at?: string;
 }
 
-export interface PlanGenerateRequest {
-  goal: string;
-  num_days?: number;
-  minutes_per_day?: number;
-  start_date?: string;
-  preferences?: string;
-}
-
-export interface PlanUpdateRequest {
-  plan_id: string;
-  user_message: string;
-}
-
-export interface PlanDeployRequest {
-  plan_id: string;
-}
-
-export interface PlanResponse {
-  plan_id: string;
-  plan: Plan;
-}
-
-export interface PlanDeployResponse {
-  tasklist_id: string;
-  created_count: number;
-  message: string;
-}
-
-export interface PlanHistoryItem {
-  plan_id: string;
-  goal: string;
-  created_at: string | null;
-  num_days: number;
-}
-
 export interface UserInfo {
   authenticated: boolean;
+  user_id?: string;
   email?: string;
   name?: string;
 }
 
+export interface Conversation {
+  conversation_id: string;
+  user_id: string;
+  title: string;
+  state: 'idle' | 'awaiting_info' | 'generating';
+  latest_plan_id?: string | null;
+  pending_goal?: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface Message {
+  message_id?: string;
   role: 'user' | 'assistant';
   content: string;
-  planId?: string;
+  created_at?: string;
+}
+
+export interface ConversationDetail {
+  conversation: Conversation;
+  messages: Message[];
+  latest_plan: Plan | null;
+}
+
+export interface ConversationCreateResponse {
+  conversation_id: string;
+}
+
+export interface ConversationPlanResponse {
+  state: 'idle' | 'awaiting_info' | 'generating';
+  plan_id?: string;
+  plan?: Plan;
+  questions?: string[];
+}
+
+export interface DeployResponse {
+  tasklist_id: string;
+  tasklist_title: string;
+  conversation_id: string;
+  plan_id: string;
+  created_count: number;
+  updated_count: number;
+  message: string;
 }

@@ -8,12 +8,14 @@ class Settings(BaseSettings):
     
     # Core settings
     APP_ENV: str = "dev"
-    FRONTEND_BASE_URL: str = "http://localhost:3000"
-    BACKEND_BASE_URL: str = "http://localhost:8000"
+    FRONTEND_BASE_URL: str = "http://127.0.0.1:3000"
+    BACKEND_BASE_URL: str = "http://127.0.0.1:8000"
+    CORS_ALLOWED_ORIGINS: str = ""
     
     # Security
     SECRET_KEY: str
     ENCRYPTION_KEY: str
+    TOKEN_ENCRYPTION_KEY: str
     COOKIE_SECURE: bool = False
     
     # Google OAuth
@@ -24,6 +26,15 @@ class Settings(BaseSettings):
     # Gemini API
     GEMINI_API_KEY: str
     GEMINI_MODEL: str = "gemini-2.0-flash-exp"
+
+    # Snowflake
+    SNOWFLAKE_ACCOUNT: str
+    SNOWFLAKE_USER: str
+    SNOWFLAKE_PASSWORD: str
+    SNOWFLAKE_DATABASE: str
+    SNOWFLAKE_SCHEMA: str
+    SNOWFLAKE_WAREHOUSE: str
+    SNOWFLAKE_ROLE: str
     
     class Config:
         env_file = ".env"

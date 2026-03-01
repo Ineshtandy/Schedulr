@@ -1,9 +1,9 @@
-"""Gemini AI service for plan generation and updates."""
+"""Gemini AI service for plan generation, clarification, and updates."""
 import google.generativeai as genai
 import json
 import uuid
-from datetime import datetime, timedelta
-from typing import Optional
+from datetime import datetime
+from typing import List
 from tenacity import retry, stop_after_attempt, wait_exponential
 from app.config import settings
 from app.models.schemas import Plan, PlanGenerateRequest
@@ -83,6 +83,26 @@ CRITICAL RULES:
 Return ONLY valid JSON. No markdown, no explanations, just the JSON object."""
 
 
+def get_clarification_prompt(goal: str) -> str:
+        """Prompt for generating two concise clarification questions."""
+        return f"""You are helping refine a planning goal.
+
+User goal:
+{goal}
+
+Return STRICT JSON ONLY as:
+{{
+    "questions": ["question 1", "question 2"]
+}}
+
+Rules:
+1. Ask exactly 2 questions.
+2. Questions should improve planning quality.
+3. Keep each question under 140 characters.
+4. No markdown, no extra keys.
+"""
+
+
 @retry(
     stop=stop_after_attempt(3),
     wait=wait_exponential(multiplier=1, min=2, max=10),
@@ -102,6 +122,25 @@ def call_gemini_with_retry(prompt: str) -> str:
     """
     response = model.generate_content(prompt)
     return response.text
+
+
+def generate_clarification_questions(goal: str) -> List[str]:
+    """Generate two clarifying questions for first-time conversation setup."""
+    response_text = call_gemini_with_retry(get_clarification_prompt(goal))
+    try:
+        payload = json.loads(response_text)
+        questions = payload.get("questions", [])
+        if isinstance(questions, list):
+            clean = [str(item).strip() for item in questions if str(item).strip()]
+            if len(clean) >= 2:
+                return clean[:2]
+    except json.JSONDecodeError:
+        pass
+
+    return [
+        "How many days should this plan cover?",
+        "When would you like to start?",
+    ]
 
 
 def generate_plan(request: PlanGenerateRequest, user_id: str) -> Plan:

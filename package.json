@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "concurrently \"npm run dev:fe\" \"npm run dev:be\"",
     "dev:fe": "cd frontend && npm run dev",
-    "dev:be": "cd backend && conda run -n ds_mode uvicorn app.main:app --reload --port 8000",
+    "dev:be": "cd backend && conda run --no-capture-output -n ds_mode python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000",
     "install:all": "npm install && cd frontend && npm install",
     "install:fe": "cd frontend && npm install",
     "install:be": "cd backend && conda run -n ds_mode pip install -r requirements.txt"

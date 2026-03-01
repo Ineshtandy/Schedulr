@@ -2,6 +2,7 @@
 import httpx
 import json
 from typing import Dict, Any
+from urllib.parse import urlencode
 from app.config import settings
 
 
@@ -33,7 +34,7 @@ class GoogleOAuth:
             "prompt": "consent",
         }
         
-        query_string = "&".join([f"{k}={v}" for k, v in params.items()])
+        query_string = urlencode(params)
         return f"{self.auth_endpoint}?{query_string}"
     
     async def exchange_code_for_tokens(self, code: str) -> Dict[str, Any]:

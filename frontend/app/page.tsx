@@ -5,12 +5,15 @@ import { useState, useEffect } from 'react';
 type AnimationPhase = 'idle' | 'exit' | 'enter';
 
 export default function LandingPage() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000';
   const words = ['adventure', 'project', 'trip', 'hobby', 'resolution'];
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [animationPhase, setAnimationPhase] = useState<AnimationPhase>('idle');
   
   useEffect(() => {
+    // Only run animation on client side
+    if (typeof window === 'undefined') return;
+
     const phaseTimings = {
       idle: 1800,
       exit: 350,
@@ -39,7 +42,7 @@ export default function LandingPage() {
     const interval = setInterval(runCycle, totalCycle);
     
     return () => clearInterval(interval);
-  }, []);
+  }, [words.length]);
   
   const handleSignIn = () => {
     window.location.href = `${API_URL}/api/auth/login`;
