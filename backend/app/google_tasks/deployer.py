@@ -5,7 +5,12 @@ from typing import Dict
 
 from app.auth.token_store import get_refresh_token
 from app.deployments.storage import create_deployment, upsert_deployed_task
-from app.google_tasks.client import create_task, create_tasklist, refresh_access_token
+from app.google_tasks.client import (
+    create_task,
+    create_tasklist,
+    delete_tasklist,
+    refresh_access_token,
+)
 from app.models.schemas import Plan
 
 
@@ -84,3 +89,24 @@ async def deploy_plan_to_tasks(user_id: str, conversation_id: str, plan: Plan) -
         "created_count": created_count,
         "updated_count": updated_count,
     }
+
+
+async def delete_plan_from_tasks(user_id: str, tasklist_id: str) -> None:
+    """Delete a deployed plan from Google Tasks."""
+    refresh_token = get_refresh_token(user_id)
+    if not refresh_token:
+        raise ValueError("No refresh token found. Please sign in again.")
+
+    access_token = await refresh_access_token(refresh_token)
+    await delete_tasklist(access_token, tasklist_id)
+
+
+async def update_plan_in_tasks(
+    user_id: str, conversation_id: str, old_tasklist_id: str, new_plan: Plan
+) -> Dict:
+    """Update a deployed plan by deleting the old one and deploying the new one."""
+    # Delete the old tasklist
+    await delete_plan_from_tasks(user_id, old_tasklist_id)
+    
+    # Deploy the new plan
+    return await deploy_plan_to_tasks(user_id, conversation_id, new_plan)

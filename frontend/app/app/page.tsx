@@ -96,6 +96,11 @@ export default function AppPage() {
 
       if (!source) {
         await refreshConversations(conversationId);
+      } else {
+        // Update the conversation in the existing list
+        setConversations(prev => 
+          prev.map(c => c.conversation_id === conversationId ? detail.conversation : c)
+        );
       }
     } finally {
       setIsLoading(false);
@@ -183,6 +188,19 @@ export default function AppPage() {
     }
   }
 
+  async function handleRefreshActiveConversation() {
+    if (!activeConversationId) return;
+    try {
+      const detail = await getConversation(activeConversationId);
+      // Update conversations list with refreshed conversation
+      setConversations(prev => 
+        prev.map(c => c.conversation_id === activeConversationId ? detail.conversation : c)
+      );
+    } catch (error) {
+      console.error('Failed to refresh conversation:', error);
+    }
+  }
+
   // Show loading state during initial load
   if (!user) {
     return (
@@ -224,7 +242,14 @@ export default function AppPage() {
         </main>
 
         <aside className="hidden xl:block w-[30rem] bg-white border-l border-gray-200 overflow-y-auto">
-          <PlanPanel plan={currentPlan} planId={currentPlanId} isLoading={isLoading} planUpdating={planUpdating} />
+          <PlanPanel 
+            plan={currentPlan} 
+            planId={currentPlanId} 
+            isLoading={isLoading} 
+            planUpdating={planUpdating}
+            conversation={activeConversation}
+            onRefreshConversation={handleRefreshActiveConversation}
+          />
         </aside>
       </div>
     </div>

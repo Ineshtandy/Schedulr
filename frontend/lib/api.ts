@@ -191,6 +191,18 @@ export async function deployPlan(planId: string): Promise<DeployResponse> {
   });
 }
 
+export async function deletePlanDeployment(planId: string): Promise<{ message: string }> {
+  return fetchAPI<{ message: string }>(`/api/plans/${planId}/deployment`, {
+    method: 'DELETE',
+  });
+}
+
+export async function updatePlanDeployment(planId: string): Promise<DeployResponse> {
+  return fetchAPI<DeployResponse>(`/api/plans/${planId}/deployment/update`, {
+    method: 'POST',
+  });
+}
+
 export async function logout(): Promise<void> {
   await fetchAPI<{ message: string }>('/api/auth/logout', { method: 'POST' });
 }

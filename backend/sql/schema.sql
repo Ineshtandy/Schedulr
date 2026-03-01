@@ -19,7 +19,11 @@ CREATE TABLE IF NOT EXISTS conversations (
   latest_plan_id STRING,
   pending_goal STRING,
   created_at TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
-  updated_at TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP()
+  updated_at TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP(),
+  is_deployed BOOLEAN DEFAULT FALSE,
+  deployment_id STRING,
+  tasklist_id STRING,
+  deployed_at TIMESTAMP_NTZ
 );
 
 CREATE TABLE IF NOT EXISTS messages (

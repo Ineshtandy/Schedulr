@@ -132,6 +132,10 @@ class Conversation(BaseModel):
     pending_goal: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
+    is_deployed: bool = False
+    deployment_id: Optional[str] = None
+    tasklist_id: Optional[str] = None
+    deployed_at: Optional[datetime] = None
 
 
 class ConversationCreateResponse(BaseModel):

@@ -32,7 +32,8 @@ def create_conversation(user_id: str, title: Optional[str] = None) -> str:
 def list_conversations(user_id: str) -> List[Dict[str, Any]]:
     return fetch_all(
         """
-        SELECT conversation_id, user_id, title, state, latest_plan_id, pending_goal, created_at, updated_at
+        SELECT conversation_id, user_id, title, state, latest_plan_id, pending_goal, 
+               created_at, updated_at, is_deployed, deployment_id, tasklist_id, deployed_at
         FROM conversations
         WHERE user_id = %s
         ORDER BY updated_at DESC
@@ -44,7 +45,8 @@ def list_conversations(user_id: str) -> List[Dict[str, Any]]:
 def get_conversation(user_id: str, conversation_id: str) -> Optional[Dict[str, Any]]:
     return fetch_one(
         """
-        SELECT conversation_id, user_id, title, state, latest_plan_id, pending_goal, created_at, updated_at
+        SELECT conversation_id, user_id, title, state, latest_plan_id, pending_goal, 
+               created_at, updated_at, is_deployed, deployment_id, tasklist_id, deployed_at
         FROM conversations
         WHERE user_id = %s AND conversation_id = %s
         """,
@@ -111,3 +113,37 @@ def ensure_title_from_first_message(user_id: str, conversation_id: str, first_us
         return
     title = _auto_title_from_message(first_user_message)
     update_conversation_title(user_id, conversation_id, title)
+
+
+def set_deployment_status(
+    conversation_id: str, deployment_id: str, tasklist_id: str
+) -> None:
+    """Mark conversation as deployed with deployment details."""
+    exec_query(
+        """
+        UPDATE conversations
+        SET is_deployed = TRUE, 
+            deployment_id = %s, 
+            tasklist_id = %s, 
+            deployed_at = CURRENT_TIMESTAMP(),
+            updated_at = CURRENT_TIMESTAMP()
+        WHERE conversation_id = %s
+        """,
+        (deployment_id, tasklist_id, conversation_id),
+    )
+
+
+def clear_deployment_status(conversation_id: str) -> None:
+    """Clear deployment status after deletion."""
+    exec_query(
+        """
+        UPDATE conversations
+        SET is_deployed = FALSE, 
+            deployment_id = NULL, 
+            tasklist_id = NULL, 
+            deployed_at = NULL,
+            updated_at = CURRENT_TIMESTAMP()
+        WHERE conversation_id = %s
+        """,
+        (conversation_id,),
+    )

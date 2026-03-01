@@ -62,3 +62,14 @@ async def create_task(
         )
         response.raise_for_status()
         return response.json()
+
+
+async def delete_tasklist(access_token: str, tasklist_id: str) -> None:
+    """Delete a tasklist from Google Tasks."""
+    endpoint = f"{TASKS_BASE}/users/@me/lists/{tasklist_id}"
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        response = await client.delete(
+            endpoint,
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+        response.raise_for_status()

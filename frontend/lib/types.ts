@@ -39,6 +39,10 @@ export interface Conversation {
   pending_goal?: string | null;
   created_at?: string;
   updated_at?: string;
+  is_deployed?: boolean;
+  deployment_id?: string | null;
+  tasklist_id?: string | null;
+  deployed_at?: string | null;
 }
 
 export interface Message {
