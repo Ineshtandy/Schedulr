@@ -2,22 +2,43 @@
 
 import { useState, useEffect } from 'react';
 
+type AnimationPhase = 'idle' | 'exit' | 'enter';
+
 export default function LandingPage() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const words = ['adventure', 'project', 'trip', 'hobby', 'resolution'];
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [isVisible, setIsVisible] = useState(true);
+  const [animationPhase, setAnimationPhase] = useState<AnimationPhase>('idle');
   
   useEffect(() => {
-    const wordInterval = setInterval(() => {
-      setIsVisible(false);
+    const phaseTimings = {
+      idle: 1800,
+      exit: 350,
+      enter: 350,
+    };
+    const totalCycle = phaseTimings.idle + phaseTimings.exit + phaseTimings.enter; // 2500ms
+
+    const runCycle = () => {
+      setAnimationPhase('idle');
+      
+      setTimeout(() => {
+        setAnimationPhase('exit');
+      }, phaseTimings.idle);
+      
       setTimeout(() => {
         setCurrentWordIndex((prev) => (prev + 1) % words.length);
-        setIsVisible(true);
-      }, 300);
-    }, 2800); // 2.5s pause + 0.3s transition
+        setAnimationPhase('enter');
+      }, phaseTimings.idle + 300); // 300ms into exit, creates 50ms overlap
+      
+      setTimeout(() => {
+        setAnimationPhase('idle');
+      }, totalCycle);
+    };
+
+    runCycle();
+    const interval = setInterval(runCycle, totalCycle);
     
-    return () => clearInterval(wordInterval);
+    return () => clearInterval(interval);
   }, []);
   
   const handleSignIn = () => {
@@ -35,17 +56,24 @@ export default function LandingPage() {
     return colors[word] || 'text-blue-600';
   };
 
+  const getAnimationClass = () => {
+    if (animationPhase === 'exit') {
+      return 'animate-slideDown';
+    }
+    if (animationPhase === 'enter') {
+      return 'animate-slideUp';
+    }
+    return '';
+  };
+
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
       <div className="text-center">
         {/* Animated Heading */}
-        <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8">
+        <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight">
           Ready to plan your next{' '}
           <div 
-            className={`inline-block min-w-[250px] transition-opacity duration-300 ${
-              isVisible ? 'opacity-100' : 'opacity-0'
-            } ${getColorClass(words[currentWordIndex])}`}
-            key={currentWordIndex}
+            className={`inline-flex items-center justify-center overflow-hidden w-[320px] h-[1.2em] transition-colors duration-200 drop-shadow-sm ${getColorClass(words[currentWordIndex])} ${getAnimationClass()}`}
           >
             {words[currentWordIndex]}
           </div>
