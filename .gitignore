@@ -42,4 +42,5 @@ logs/
 node_modules/
 
 # Testing + Agentic Info
+cli_tests/
 code_summary.md

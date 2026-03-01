@@ -4,21 +4,20 @@ An AI-powered planning assistant that turns your goals into actionable day-by-da
 
 ## Architecture
 
-**Frontend:** Next.js 14 (App Router) + TypeScript + Tailwind CSS  
+**Frontend:** Next.js 16 (App Router) + TypeScript + Tailwind CSS  
 **Backend:** FastAPI + Python 3.12  
 **AI:** Google Gemini 2.5 Flash  
-**Storage:** In-memory (`will be migrated to Snowflake`)  
+**Storage:** Snowflake  
 **Authentication:** Google OAuth 2.0  
 **Deployment:** Google Tasks API
 
 ## Features
 
-- 🤖 **AI-Powered Planning**: Generate comprehensive day-by-day plans using Gemini AI
+- 🤖 **AI-Powered Planning**: Generate day-by-day plans using Gemini AI
 - 💬 **Conversational Updates**: Refine your plans through natural language chat
-- 📜 **Plan History**: Track and revisit all your plan iterations
 - 🚀 **One-Click Deployment**: Push your plans directly to Google Tasks
 - 🔒 **Secure Authentication**: Google OAuth with encrypted token storage
-- 💾 **Chat Persistence**: Your conversations are saved in browser storage
+- 💾 **Chat Persistence**: Conversations and plans stored in Snowflake
 
 ## Project Structure
 
@@ -29,9 +28,9 @@ Schedulr/
 │   │   ├── page.tsx              # Landing page with animated text
 │   │   └── app/page.tsx          # Main app (3-panel layout)
 │   ├── components/    # React components
-│   │   ├── ChatInterface.tsx     # Chat UI
-│   │   ├── PlanViewer.tsx        # Plan display & deploy
-│   │   └── PlanHistory.tsx       # Sidebar history
+│   │   ├── ChatPanel.tsx         # Chat UI
+│   │   ├── PlanPanel.tsx         # Plan display & deploy
+│   │   └── Sidebar.tsx           # Conversation list
 │   └── lib/           # Utilities
 │       ├── api.ts                # API client
 │       ├── types.ts              # TypeScript types
@@ -50,10 +49,9 @@ Schedulr/
 │       │   └── google_tasks.py   # Tasks API client
 │       ├── models/
 │       │   └── schemas.py        # Pydantic models
-│       └── utils/
+│       ├── utils/
 │           ├── session.py        # Cookie sessions
-│           ├── encryption.py     # Token encryption
-│           └── storage.py        # In-memory store
+│           └── encryption.py     # Token encryption
 │
 ├── .env.example       # Environment template
 ├── .gitignore
@@ -78,8 +76,8 @@ Schedulr/
 3. Navigate to **APIs & Services** → **Credentials**
 4. Click **"Create Credentials"** → **"OAuth client ID"**
 5. Application type: **"Web application"**
-6. **Authorized JavaScript origins**: `http://127.0.0.1:3000`
-7. **Authorized redirect URIs**: `http://127.0.0.1:8000/api/auth/callback`
+6. **Authorized JavaScript origins**: `http://localhost:3000`
+7. **Authorized redirect URIs**: `http://localhost:8000/api/auth/callback`
 8. Save your **Client ID** and **Client Secret**
 
 #### B. Enable Required APIs
@@ -137,15 +135,15 @@ Edit `backend/.env`:
 # Google OAuth
 GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=GOCSPX-your-secret
-GOOGLE_REDIRECT_URI=http://127.0.0.1:8000/api/auth/callback
+GOOGLE_REDIRECT_URI=http://localhost:8000/api/auth/callback
 
 # Core Settings
 APP_ENV=dev
-FRONTEND_BASE_URL=http://127.0.0.1:3000
-BACKEND_BASE_URL=http://127.0.0.1:8000
+FRONTEND_BASE_URL=http://localhost:3000
+BACKEND_BASE_URL=http://localhost:8000
 COOKIE_SECURE=false
 # Optional additional frontend origins (comma-separated)
-# CORS_ALLOWED_ORIGINS=http://127.0.0.1:3000,http://localhost:3000
+# CORS_ALLOWED_ORIGINS=http://localhost:3000
 
 # Generate SECRET_KEY
 SECRET_KEY=your-generated-secret-key
@@ -171,7 +169,7 @@ python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().
 Create `frontend/.env.local`:
 
 ```bash
-NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
+NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
 ### 5. Run the Application
@@ -199,6 +197,30 @@ Terminal 2 (Frontend):
 cd frontend
 npm run dev
 ```
+
+## Production Build
+
+### Frontend
+
+```bash
+cd frontend
+npm run build
+npm run start
+```
+
+### Backend
+
+```bash
+cd backend
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+## Deployment Notes (DigitalOcean App Platform)
+
+- Create two services: one for the Next.js frontend, one for the FastAPI backend.
+- Set environment variables using `backend/.env` as the source of truth.
+- Ensure frontend env includes `NEXT_PUBLIC_API_URL=https://<your-backend-domain>`.
+- Set `FRONTEND_BASE_URL` and `BACKEND_BASE_URL` to the public URLs.
 
 ### 6. Access the Application
 

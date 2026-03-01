@@ -1,4 +1,5 @@
 """Google Tasks API service for deploying plans."""
+import logging
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google.oauth2.credentials import Credentials
@@ -7,6 +8,8 @@ from typing import Tuple
 from app.utils.encryption import decrypt_token
 from app.models.schemas import Plan
 from app.config import settings
+
+logger = logging.getLogger(__name__)
 
 
 def get_tasks_service(access_token: str, refresh_token: str):
@@ -115,14 +118,15 @@ def deploy_plan_to_tasks(plan: Plan, access_token: str, refresh_token: str) -> T
         return tasklist_id, created_count
         
     except HttpError as e:
+        logger.exception("Google Tasks API error", extra={"status": e.resp.status})
         if e.resp.status == 401:
             raise Exception("Authentication expired. Please sign in again.")
-        elif e.resp.status == 429:
+        if e.resp.status == 429:
             raise Exception("Rate limit exceeded. Please try again later.")
-        else:
-            raise Exception(f"Google Tasks API error: {e}")
+        raise Exception(f"Google Tasks API error: {e}")
     
     except Exception as e:
+        logger.exception("Failed to deploy plan")
         raise Exception(f"Failed to deploy plan: {e}")
 
 
@@ -141,4 +145,5 @@ def list_task_lists(access_token: str, refresh_token: str) -> list:
         results = service.tasklists().list().execute()
         return results.get('items', [])
     except Exception as e:
+        logger.exception("Failed to list task lists")
         raise Exception(f"Failed to list task lists: {e}")

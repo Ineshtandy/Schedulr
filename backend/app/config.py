@@ -8,8 +8,8 @@ class Settings(BaseSettings):
     
     # Core settings
     APP_ENV: str = "dev"
-    FRONTEND_BASE_URL: str = "http://127.0.0.1:3000"
-    BACKEND_BASE_URL: str = "http://127.0.0.1:8000"
+    FRONTEND_BASE_URL: str = "http://localhost:3000"
+    BACKEND_BASE_URL: str = "http://localhost:8000"
     CORS_ALLOWED_ORIGINS: str = ""
     
     # Security
