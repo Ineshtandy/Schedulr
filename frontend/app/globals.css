@@ -90,3 +90,84 @@ body {
 }
 .animate-word:nth-child(4) { animation-delay: 6s; }
 .animate-word:nth-child(5) { animation-delay: 8s; }
+
+/* React Calendar styling improvements */
+.react-calendar {
+  color: #1f2937 !important;
+}
+
+.react-calendar__tile {
+  color: #1f2937 !important;
+}
+
+.react-calendar__tile--active {
+  color: #ffffff !important;
+}
+
+.react-calendar__tile--now {
+  color: #1f2937 !important;
+}
+
+.react-calendar__month-view__weekdays {
+  color: #374151 !important;
+  font-weight: 600;
+}
+
+.react-calendar__navigation {
+  color: #1f2937 !important;
+}
+
+.react-calendar__navigation button {
+  color: #1f2937 !important;
+}
+
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+  color: #0d47a1 !important;
+}
+
+.react-calendar__month-view__days__day {
+  color: #1f2937 !important;
+}
+
+.react-calendar span {
+  color: #1f2937 !important;
+}
+
+/* Input placeholder styling */
+input::placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+input::-webkit-input-placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+input:-moz-placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+input::-moz-placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+textarea::placeholder {
+  color: #6b7280 !important;
+  opacity: 1 !important;
+}
+
+/* Ensure input and textarea text is visible */
+input,
+textarea {
+  color: #1f2937 !important;
+}
+
+input::selection,
+textarea::selection {
+  background-color: #60a5fa;
+  color: white;
+}

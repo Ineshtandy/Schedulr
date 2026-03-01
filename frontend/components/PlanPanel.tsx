@@ -51,7 +51,7 @@ export default function PlanPanel({ plan, planId, isLoading, planUpdating = fals
 
   if (!plan) {
     return (
-      <div className="h-full flex items-center justify-center text-center text-gray-500 p-6">
+      <div className="h-full flex items-center justify-center text-center text-gray-700 p-6">
         <div>
           <p className="text-lg font-medium text-gray-800">No plan selected</p>
           <p className="text-sm mt-1">Open or create a chat to generate a plan.</p>
@@ -67,14 +67,14 @@ export default function PlanPanel({ plan, planId, isLoading, planUpdating = fals
         <div className="absolute inset-0 bg-white/70 backdrop-blur-sm z-10 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-            <p className="text-sm text-gray-600">Updating plan…</p>
+            <p className="text-sm text-gray-800">Updating plan…</p>
           </div>
         </div>
       )}
 
       <div className="p-6 border-b border-gray-200 space-y-3">
         <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">{plan.goal}</h3>
-        <p className="text-sm text-gray-600">{plan.num_days} days • {plan.minutes_per_day} min/day</p>
+        <p className="text-sm text-gray-800">{plan.num_days} days • {plan.minutes_per_day} min/day</p>
         <button
           onClick={onDeploy}
           disabled={isDeploying || isLoading || !planId}

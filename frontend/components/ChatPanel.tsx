@@ -68,16 +68,16 @@ export default function ChatPanel({
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.length === 0 && (
           <div className="space-y-4">
-            <div className="text-gray-600">
+            <div>
               <p className="text-xl font-semibold text-gray-900">Start a new conversation</p>
-              <p className="text-sm mt-1">The first message asks two clarifying questions before initial plan generation.</p>
+              {/* <p className="text-sm mt-1 text-gray-800">The first message asks two clarifying questions before initial plan generation.</p> */}
             </div>
             <div className="flex flex-wrap gap-2">
               {STARTER_PILLS.map((pill) => (
                 <button
                   key={pill}
                   onClick={() => sendStarter(pill)}
-                  className="px-3 py-1.5 rounded-full border border-gray-300 bg-white text-sm hover:bg-gray-50"
+                  className="px-3 py-1.5 rounded-full border border-gray-300 bg-white text-sm text-gray-900 hover:bg-gray-50"
                 >
                   {pill}
                 </button>
@@ -99,7 +99,7 @@ export default function ChatPanel({
         ))}
 
         {isLoading && (
-          <div className="text-sm text-gray-500">Working on your request…</div>
+          <div className="text-sm text-gray-700">Working on your request…</div>
         )}
 
         {/* Invisible anchor for auto-scroll */}

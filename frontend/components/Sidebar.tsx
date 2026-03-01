@@ -55,12 +55,12 @@ export default function Sidebar({
         >
           New plan
         </button>
-        <button
+        {/* <button
           onClick={() => setCollapsed(true)}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
         >
           ←
-        </button>
+        </button> */}
       </div>
 
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
@@ -75,12 +75,12 @@ export default function Sidebar({
             }`}
           >
             <p className="font-medium truncate">{conversation.title || 'New chat'}</p>
-            <p className="text-xs text-gray-500 mt-1 uppercase">{conversation.state}</p>
+            <p className="text-xs text-gray-700 mt-1 uppercase">{conversation.state}</p>
           </button>
         ))}
 
         {conversations.length === 0 && (
-          <div className="text-sm text-gray-500 p-3">No chats yet. Start a new plan.</div>
+          <div className="text-sm text-gray-800 p-3">No chats yet. Start a new plan.</div>
         )}
       </div>
     </div>
