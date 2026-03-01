@@ -40,3 +40,6 @@ logs/
 
 # Dependencies
 node_modules/
+
+# Testing + Agentic Info
+code_summary.md
