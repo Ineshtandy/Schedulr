@@ -147,3 +147,73 @@ def clear_deployment_status(conversation_id: str) -> None:
         """,
         (conversation_id,),
     )
+
+
+def get_deployment_for_conversation(conversation_id: str) -> Optional[Dict[str, Any]]:
+    """Fetch deployment record for a conversation."""
+    return fetch_one(
+        """
+        SELECT deployment_id, plan_id, tasklist_id, user_id
+        FROM deployments
+        WHERE conversation_id = %s
+        """,
+        (conversation_id,),
+    )
+
+
+def delete_conversation_cascade(user_id: str, conversation_id: str) -> bool:
+    """
+    Cascade delete a conversation and all related records.
+    
+    Returns True if successful, False if conversation not found or user mismatch.
+    Raises exception on database errors.
+    """
+    # Verify conversation exists and belongs to user
+    conversation = get_conversation(user_id, conversation_id)
+    if not conversation:
+        return False
+    
+    # Delete in cascade order (respecting implicit foreign key relationships)
+    
+    # 1. Delete agent traces
+    exec_query(
+        "DELETE FROM agent_traces WHERE conversation_id = %s",
+        (conversation_id,),
+    )
+    
+    # 2. Delete deployed tasks for all plans in this conversation
+    exec_query(
+        """
+        DELETE FROM deployed_tasks
+        WHERE plan_id IN (
+            SELECT plan_id FROM plans WHERE conversation_id = %s
+        )
+        """,
+        (conversation_id,),
+    )
+    
+    # 3. Delete deployments
+    exec_query(
+        "DELETE FROM deployments WHERE conversation_id = %s",
+        (conversation_id,),
+    )
+    
+    # 4. Delete plans
+    exec_query(
+        "DELETE FROM plans WHERE conversation_id = %s",
+        (conversation_id,),
+    )
+    
+    # 5. Delete messages
+    exec_query(
+        "DELETE FROM messages WHERE conversation_id = %s",
+        (conversation_id,),
+    )
+    
+    # 6. Delete the conversation itself
+    exec_query(
+        "DELETE FROM conversations WHERE conversation_id = %s AND user_id = %s",
+        (conversation_id, user_id),
+    )
+    
+    return True

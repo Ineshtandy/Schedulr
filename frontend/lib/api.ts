@@ -157,6 +157,12 @@ export async function updateConversationTitle(conversationId: string, title: str
   });
 }
 
+export async function deleteConversation(conversationId: string): Promise<{ message: string; conversation_id: string }> {
+  return fetchAPI<{ message: string; conversation_id: string }>(`/api/conversations/${conversationId}`, {
+    method: 'DELETE',
+  });
+}
+
 export async function generatePlan(
   conversationId: string,
   payload: {

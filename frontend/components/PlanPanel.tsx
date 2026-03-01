@@ -140,7 +140,7 @@ export default function PlanPanel({
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="flex-1 px-4 py-2 bg-gray-100 border border-gray-400 rounded-lg hover:bg-gray-200 text-gray-800"
               >
                 Cancel
               </button>

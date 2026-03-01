@@ -32,6 +32,24 @@ export default function AppPage() {
     [conversations, activeConversationId]
   );
 
+  const displayName = useMemo(() => {
+    const rawName = user?.name?.trim();
+    if (rawName) {
+      return rawName;
+    }
+
+    const emailPrefix = user?.email?.split('@')[0]?.trim();
+    if (!emailPrefix) {
+      return '';
+    }
+
+    return emailPrefix
+      .split(/[._-]+/)
+      .filter(Boolean)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
+  }, [user?.name, user?.email]);
+
   useEffect(() => {
     // Only run on client side
     if (typeof window === 'undefined') return;
@@ -73,6 +91,16 @@ export default function AppPage() {
 
     void initialize();
   }, [router]);
+
+  useEffect(() => {
+    if (!user) return;
+    console.log('Derived display name:', displayName);
+    console.log('User info payload:', {
+      user_id: user.user_id,
+      email: user.email,
+      name: user.name,
+    });
+  }, [user, displayName]);
 
   async function refreshConversations(preferredId?: string) {
     const items = await listConversations();
@@ -217,7 +245,7 @@ export default function AppPage() {
     <div className="h-screen flex flex-col bg-gray-50">
       <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900">Schedulr</h1>
-        <div className="text-sm text-gray-800">{user?.email}</div>
+        <div className="text-sm font-bold text-gray-900">{displayName || user?.email}</div>
       </header>
 
       <div className="flex-1 flex overflow-hidden">

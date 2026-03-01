@@ -71,22 +71,41 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
+      <style>{`
+        @keyframes blink {
+          0%, 49% { opacity: 1; }
+          50%, 100% { opacity: 0; }
+        }
+        .cursor {
+          animation: blink 1s infinite;
+          display: inline;
+          margin: 0 2px;
+        }
+      `}</style>
       <div className="text-center">
+        {/* Schedulr Title */}
+        <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">Schedulr</h2>
+
         {/* Animated Heading */}
-        <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight">
-          Ready to plan your next{' '}
+        <h1 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-8 leading-tight">
+          Ready to plan your next<span className="cursor -mr-5">_</span>
           <div 
-            className={`inline-flex items-center justify-center overflow-hidden w-[320px] h-[1.2em] transition-colors duration-200 drop-shadow-sm ${getColorClass(words[currentWordIndex])} ${getAnimationClass()}`}
+            className={`inline-flex items-center justify-center overflow-hidden w-[240px] h-[1.2em] transition-colors duration-200 drop-shadow-sm ${getColorClass(words[currentWordIndex])} ${getAnimationClass()}`}
           >
-            {words[currentWordIndex]}
+            {words[currentWordIndex]}?
           </div>
         </h1>
 
         {/* Sign in button */}
         <button
           onClick={handleSignIn}
-          className="px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
+          className="px-8 py-4 bg-white text-gray-700 text-lg font-semibold rounded-full hover:bg-gray-100 transition-colors shadow-lg hover:shadow-xl inline-flex items-center gap-3 border border-gray-300"
         >
+          <img 
+            src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png" 
+            alt="Google" 
+            className="w-5 h-5"
+          />
           Sign in with Google
         </button>
       </div>
