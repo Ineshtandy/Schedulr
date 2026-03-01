@@ -1,4 +1,6 @@
 """Plan deployment endpoints."""
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.conversations.storage import get_conversation
@@ -8,6 +10,7 @@ from app.plans.storage import get_plan_by_id
 from app.routers.auth import get_session_data
 
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -40,4 +43,12 @@ async def deploy_plan(plan_id: str, session: dict = Depends(get_session_data)):
             updated_count=result["updated_count"],
         )
     except Exception as exc:
+        logger.exception(
+            "Deploy failed",
+            extra={
+                "user_id": user_id,
+                "plan_id": plan_id,
+                "conversation_id": conversation_id,
+            },
+        )
         raise HTTPException(status_code=500, detail=str(exc)) from exc

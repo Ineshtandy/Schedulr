@@ -8,7 +8,8 @@ import httpx
 from app.config import settings
 
 TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token"
-TASKLISTS_ENDPOINT = "https://tasks.googleapis.com/tasks/v1/users/@me/lists"
+TASKS_BASE = "https://tasks.googleapis.com/tasks/v1"
+TASKLISTS_ENDPOINT = f"{TASKS_BASE}/users/@me/lists"
 
 
 async def refresh_access_token(refresh_token: str) -> str:
@@ -48,7 +49,7 @@ async def create_task(
     notes: str,
     due_rfc3339: str,
 ) -> Dict:
-    endpoint = f"{TASKLISTS_ENDPOINT}/{tasklist_id}/tasks"
+    endpoint = f"{TASKS_BASE}/lists/{tasklist_id}/tasks"
     async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.post(
             endpoint,
